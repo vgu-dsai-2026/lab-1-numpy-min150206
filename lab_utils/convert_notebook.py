@@ -67,7 +67,11 @@ def filter_python(source: str) -> str:
     kept_nodes: list[ast.stmt] = []
 
     for node in tree.body:
-        if isinstance(node, (ast.Import, ast.ImportFrom, ast.FunctionDef, ast.AsyncFunctionDef, ast.Assign, ast.AnnAssign)):
+        if isinstance(node, (ast.Import, ast.ImportFrom, ast.FunctionDef, ast.AsyncFunctionDef)):
+            kept_nodes.append(node)
+            continue
+
+        if isinstance(node, (ast.Assign, ast.AnnAssign)) and is_literal_assignment(node):
             kept_nodes.append(node)
 
     filtered_tree = ast.Module(body=kept_nodes, type_ignores=[])
